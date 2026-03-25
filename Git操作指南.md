@@ -26,6 +26,11 @@ Books/
 leedl-tutorial/
 ```
 
+**注意事项**：
+- **创建时机**：先创建 `.gitignore`，再 `git add`
+- **格式**：不要加 `/` 前缀（`Books/` 而不是 `/Books`）
+- **立即生效**：已跟踪的文件需要 `git rm --cached` 才能忽略
+
 ### 3. 添加文件并提交
 ```bash
 git add -A
@@ -63,10 +68,17 @@ git log --oneline               # 查看提交历史
 ### 文件操作
 ```bash
 git add 文件名                  # 添加单个文件
-git add -A                      # 添加所有文件
+git add -A                      # 添加所有文件（包括删除）
 git add .                       # 添加当前目录（不包括删除）
-git rm --cached 文件            # 取消跟踪文件
+git rm --cached 文件            # 取消跟踪文件（保留本地）
+git rm 文件                      # 删除文件（同时删除本地）
 ```
+
+### 删除文件（两种方式）
+| 场景 | 命令 |
+|------|------|
+| 本地远程都删除 | 直接删除文件夹 + `git add -A` + commit + push |
+| 保留本地，删除远程 | `git rm --cached 文件/目录` + commit + push |
 
 ### 提交操作
 ```bash
@@ -123,26 +135,48 @@ git lfs ls-files
 
 ## 四、常见问题
 
-### 1. 放弃本地修改
+### 1. 首次推送前检查
+```bash
+git status          # 查看哪些文件会被跟踪
+git ls-files        # 查看已被跟踪的文件
+```
+
+### 2. GitHub 文件大小限制
+| 大小 | 后果 |
+|------|------|
+| > 50MB | 警告 |
+| > 100MB | 拒绝 |
+
+**解决**：使用 Git LFS 或不上传
+
+### 3. 常见错误速查
+| 错误 | 原因 | 解决 |
+|------|------|------|
+| 推送到错误仓库 | 没检查远程地址 | `git remote -v` |
+| 文件删了还在 GitHub | 需 `git add -A` | 删除后执行 add |
+| .gitignore 不生效 | 文件已被跟踪 | `git rm --cached` |
+| push 被拒绝 | 远程有更新 | `git pull` 后再 push |
+
+### 4. 放弃本地修改
 ```bash
 git checkout -- 文件            # 放弃单个文件修改
 git reset --hard HEAD           # 放弃所有修改
 ```
 
-### 2. 删除远程文件（保留本地）
+### 5. 删除远程文件（保留本地）
 ```bash
 git rm --cached 文件            # 取消跟踪
 git commit -m "Remove file"    # 提交
 git push                        # 推送
 ```
 
-### 3. 从 Git 历史中删除文件
+### 6. 从 Git 历史中删除文件
 ```bash
 git filter-branch --tree-filter 'rm -f 文件路径' HEAD
 git push --force
 ```
 
-### 4. 撤销提交
+### 7. 撤销提交
 ```bash
 git reset --soft HEAD~1         # 撤销提交，保留修改
 git reset --hard HEAD~1         # 撤销提交，丢弃修改
@@ -150,7 +184,39 @@ git reset --hard HEAD~1         # 撤销提交，丢弃修改
 
 ---
 
-## 五、工作流程示意
+## 五、最佳实践
+
+### 新项目初始化流程
+```bash
+# 1. 创建项目目录
+mkdir myproject
+cd myproject
+
+# 2. 初始化 Git
+git init
+
+# 3. 创建 .gitignore（第一时间创建）
+echo "venv/
+__pycache__/
+.env" > .gitignore
+
+# 4. 检查状态
+git status
+
+# 5. 添加文件并提交
+git add -A
+git commit -m "Initial commit"
+
+# 6. 关联远程仓库
+gh repo create myproject --public
+
+# 7. 推送
+git push -u origin main
+```
+
+---
+
+## 六、工作流程示意
 
 ```
 工作区 → 暂存区 → 本地仓库 → 远程仓库
