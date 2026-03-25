@@ -1,0 +1,10 @@
+Books/
+Hello-Agents/venv/
+Hello-Agents/__pycache__/
+Hello-Agents/.env
+Hello-Agents/=0.3.0
+Hello-Agents/=1.0.0
+Hello-Agents/=2.31.0
+*.pyc
+__pycache__/
+.env
