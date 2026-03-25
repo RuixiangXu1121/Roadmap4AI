@@ -5,6 +5,7 @@ Hello-Agents/.env
 Hello-Agents/=0.3.0
 Hello-Agents/=1.0.0
 Hello-Agents/=2.31.0
+leedl-tutorial/leedl-tutorial-1.2.4/LeeDL_Tutorial_v.1.2.4.pdf
 *.pyc
 __pycache__/
 .env
